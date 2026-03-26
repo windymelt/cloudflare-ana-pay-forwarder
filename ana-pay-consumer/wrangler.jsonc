@@ -1,5 +1,5 @@
 {
-  "name": "ana-pay-forwarder",
+  "name": "ana-pay-consumer",
   "main": "src/index.js",
   "workers_dev": false,
   "preview_urls": false,
@@ -19,12 +19,22 @@
       "head_sampling_rate": 1
     }
   },
+  "browser": {
+    "binding": "BROWSER"
+  },
   "queues": {
-    "producers": [
+    "consumers": [
       {
         "queue": "ana-pay-forward-queue",
-        "binding": "ANA_PAY_QUEUE"
+        "max_batch_size": 1,
+        "max_retries": 3
       }
     ]
-  }
+  },
+  "kv_namespaces": [
+    {
+      "binding": "ANA_PAY_KV",
+      "id": "979cfe75b65244b991820484fd8c37e7"
+    }
+  ]
 }

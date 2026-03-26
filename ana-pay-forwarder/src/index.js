@@ -21,5 +21,6 @@ export default {
 
     const result = { consumedAt, amount, place };
     console.log(JSON.stringify(result));
+    await env.ANA_PAY_QUEUE.send(result);
   },
 };
