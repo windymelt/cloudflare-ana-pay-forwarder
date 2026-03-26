@@ -1,12 +1,16 @@
+import PostalMime from "postal-mime";
+
 export default {
   async email(message, env, ctx) {
-    // raw は ReadableStream (RFC 5322 形式)
-    const rawText = await new Response(message.raw).text();
-    console.log(rawText)
+    const rawBytes = await new Response(message.raw).arrayBuffer();
+    const parsed = await PostalMime.parse(rawBytes);
 
-    const dateMatch  = rawText.match(/ご利用日時：(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})/);
-    const amountMatch = rawText.match(/ご利用金額：([\d,]+)円/);
-    const placeMatch  = rawText.match(/ご利用店舗：(.+)/);
+    const body = parsed.text || parsed.html || "";
+    console.log("Decoded body:", body);
+
+    const dateMatch  = body.match(/ご利用日時：(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})/);
+    const amountMatch = body.match(/ご利用金額：([\d,]+)円/);
+    const placeMatch  = body.match(/ご利用店舗：(.+)/);
 
     // 3フィールドすべて揃わなければ何もしない
     if (!dateMatch || !amountMatch || !placeMatch) return;
